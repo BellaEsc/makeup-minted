@@ -1,0 +1,27 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r message = FALSE}
+library(ggplot2)
+skin <- read.csv('/Users/megansw/Downloads/skincare_products.csv')
+```
+
+```{r}
+type_count <- as.data.frame(table(skin$Label))
+type_count <- rename(type_count, c('Type' = 'Var1', 'Count' = 'Freq'))
+ggplot(type_count, aes(x = Type, y = Count)) + geom_bar(stat = 'identity', aes(fill = Type)) + 
+  ggtitle('Distribution of Product Types') + theme(legend.position = 'none')
+```
+
+```{r fig.height = 15}
+brand_count <- as.data.frame(table(skin$Brand))
+brand_count <- rename(brand_count, c('Brand' = 'Var1', 'Count' = 'Freq'))
+ggplot(brand_count, aes(x = Count, y = reorder(Brand, +Count))) + geom_bar(stat = 'identity', fill = 'light pink') + 
+  ggtitle('Distribution of Product Brands') + ylab('Brand') + theme(legend.position = 'none')
+```
+
+```{r}
+ggplot(skin, aes(x = Rank)) + geom_histogram(binwidth = 0.1, fill = 'light blue') + ggtitle('Distribution of Product Ratings') + ylab('Count')
+```
