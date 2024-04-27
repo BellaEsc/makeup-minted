@@ -4,24 +4,103 @@ output: html_notebook
 ---
 
 ```{r message = FALSE}
+library(tidyverse)
 library(ggplot2)
-skin <- read.csv('/Users/megansw/Downloads/skincare_products.csv')
+library(extrafont)
+library(showtext)
+library(gt)
+library(grid)
+library(gridExtra)
+
+skin <- read.csv('C:/Users/bella/OneDrive/Documents/School/makeup-minted/data/skincare_products.csv')
 ```
 
 ```{r}
+theme_polyvore <- function(){
+  font <- 'Georgia'
+  
+  theme_minimal() %+replace%
+    
+    theme(
+      # grid elements
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.ticks = element_blank(),
+      axis.line = element_line(),
+      plot.background = element_rect(fill = "#f5e2d0"),
+      plot.margin = margin(1,1,1,1, "cm"),
+      
+      
+      # text elements
+      plot.title = element_text(
+        family = font,
+        size = 24,
+        face = 'bold',
+        hjust = 0.5,
+        vjust = 2,
+        margin = margin(b=5, t=5)),
+      
+      plot.subtitle = element_text(          #subtitle
+                   family = font,            #font family
+                   size = 14),               #font size
+      
+      plot.caption = element_text(           #caption
+                   family = font,            #font family
+                   size = 9,                 #font size
+                   hjust = 1),               #right align
+      
+      axis.title = element_text(             #axis titles
+                   family = font,            #font family
+                   size = 20),               #font size
+      
+      axis.text = element_text(              #axis text
+                   family = font,            #axis family
+                   size = 16),                #font size
+      
+      axis.text.x = element_text(            #margin for axis text
+                    margin=margin(5, b = 10)),
+      
+      axis.title.y = element_text(margin=margin(b=10, r=10), angle=90)
+      
+
+    )
+}
+```
+
+```{r}
+colors <- c("#bf4e62", "#8d80ad", "#f3ad92", "#e16555", "#91bbc9", "#b56a6d")
+
 type_count <- as.data.frame(table(skin$Label))
 type_count <- rename(type_count, c('Type' = 'Var1', 'Count' = 'Freq'))
 ggplot(type_count, aes(x = Type, y = Count)) + geom_bar(stat = 'identity', aes(fill = Type)) + 
-  ggtitle('Distribution of Product Types') + theme(legend.position = 'none')
+  scale_fill_manual(values = colors) + 
+  ggtitle('Distribution of Product Types') + 
+  theme_polyvore() +
+  theme(legend.position = 'none',
+        axis.title = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size=10),
+        plot.title = element_text(size=25))
 ```
 
 ```{r fig.height = 15}
 brand_count <- as.data.frame(table(skin$Brand))
 brand_count <- rename(brand_count, c('Brand' = 'Var1', 'Count' = 'Freq'))
-ggplot(brand_count, aes(x = Count, y = reorder(Brand, +Count))) + geom_bar(stat = 'identity', fill = 'light pink') + 
-  ggtitle('Distribution of Product Brands') + ylab('Brand') + theme(legend.position = 'none')
+ggplot(brand_count, aes(x = Count, y = reorder(Brand, +Count))) + geom_bar(stat = 'identity', fill = '#e16555') + 
+  ggtitle('Distribution of Product Brands') + ylab('Brand') + theme(legend.position = 'none') +
+  theme_polyvore() +
+  theme(legend.position = 'none',
+        plot.title = element_text(size = 70),
+        plot.margin = margin(3,3,3,3, "cm"),
+        axis.text.y = element_blank(),
+        axis.title = element_text(size=50),
+        axis.text.x = element_text(size=30))
 ```
 
 ```{r}
-ggplot(skin, aes(x = Rank)) + geom_histogram(binwidth = 0.1, fill = 'light blue') + ggtitle('Distribution of Product Ratings') + ylab('Count')
+ggplot(skin, aes(x = Rank)) + 
+  geom_histogram(binwidth = 0.1, fill = '#e2808f') + 
+  ggtitle('Distribution of Product Ratings') + 
+  ylab('Count') + 
+  theme_polyvore()
 ```
